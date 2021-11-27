@@ -16,8 +16,9 @@ public class TodoService {
         return repository.findAll();
     }
 
-    public Todo save(Todo todo){
-        return repository.save(todo);
+    public TodoDTO save(TodoDTO todoDTO){
+        Todo todo = convertToTodo(todoDTO);
+        return convertToTodoDTO(repository.save(todo));
     }
 
     public void delete(Long id){
@@ -37,6 +38,20 @@ public class TodoService {
         todoDTO.setGroupListId(todo.getGroupListId());
 
         return todoDTO;
+    }
+
+    public Todo convertToTodo(TodoDTO todoDTO){
+        Todo todo = new Todo();
+
+        if(todoDTO.getTodoId()!=null)
+        {
+            todo.setId(todoDTO.getTodoId());
+        }
+        todo.setName(todoDTO.getName());
+        todo.setIsCompleted(todoDTO.getIsCompleted());
+        todo.setGroupListId(todoDTO.getGroupListId());
+
+        return todo;
     }
 
 }

@@ -1,5 +1,6 @@
 package co.com.sofka.crud.controllers;
 
+import co.com.sofka.crud.dto.TodoDTO;
 import co.com.sofka.crud.services.TodoService;
 import co.com.sofka.crud.models.Todo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +19,16 @@ public class TodoController {
     }
     
     @PostMapping(value = "api/todo")
-    public Todo save(@RequestBody Todo todo){
-        return service.save(todo);
+    public TodoDTO save(@RequestBody TodoDTO todoDTO){
+        return service.save(todoDTO);
     }
 
     @PutMapping(value = "api/todo")
-    public Todo update(@RequestBody Todo todo){
-        if(todo.getId() != null){
-            return service.save(todo);
+    public TodoDTO update(@RequestBody TodoDTO todoDTO){
+        if(todoDTO.getTodoId() != null){
+            return service.save(todoDTO);
         }
-        throw new RuntimeException("No existe el id para actualziar");
+        throw new RuntimeException("No existe el id para actualizar");
     }
 
     @DeleteMapping(value = "api/{id}/todo")
