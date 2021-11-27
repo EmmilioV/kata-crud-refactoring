@@ -22,11 +22,12 @@ public class TodoService {
     }
 
     public void delete(Long id){
-        repository.delete(get(id));
+        Todo todo = convertToTodo(get(id));
+        repository.delete(todo);
     }
 
-    public Todo get(Long id){
-         return repository.findById(id).orElseThrow();
+    public TodoDTO get(Long id){
+         return convertToTodoDTO(repository.findById(id).orElseThrow());
     }
 
     public TodoDTO convertToTodoDTO(Todo todo){
