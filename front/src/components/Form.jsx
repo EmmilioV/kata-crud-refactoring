@@ -1,10 +1,11 @@
 import React, { useContext, useRef, useState } from "react";
-import TYPES from "./Types"
+import TYPES from "../Types"
+import Store from "./Store"
 
 const Form = (props) => {
     
     const formRef = useRef(null);
-    const {dispatch, state: { todo }} = useContext(props.Store);
+    const {dispatch, state: { todo }} = useContext(Store);
     const item = todo.item;
     const [state, setState] = useState(item);
 

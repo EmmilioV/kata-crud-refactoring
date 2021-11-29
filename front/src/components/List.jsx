@@ -1,8 +1,9 @@
 import React, { useContext, useEffect } from 'react';
-import TYPES from "./Types"
+import TYPES from "../Types"
+import Store from "./Store"
 
 const List = (props) => {
-    const {dispatch, state: { todo } } = useContext(props.Store);
+    const {dispatch, state: { todo } } = useContext(Store);
     const currentList = todo.list;
 
     useEffect(() => {
