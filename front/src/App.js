@@ -1,6 +1,7 @@
 import React, { useContext, useReducer, useEffect, useRef, useState, createContext } from 'react';
 import reducer from "./Reducer"
 import TYPES from "./components/Types"
+import Form from './components/Form';
 
 const HOST_API = "http://localhost:8080/api";
 
@@ -9,77 +10,6 @@ const initialState = {
 };
 
 const Store = createContext(initialState);
-
-const Form = () => {
-  const formRef = useRef(null);
-  const { dispatch, state: { todo } } = useContext(Store);
-  const item = todo.item;
-  const [state, setState] = useState(item);
-
-  const onAdd = (event) => {
-    event.preventDefault();
-
-    const request = {
-      name: state.name,
-      todoId: null,
-      isCompleted: false
-    };
-
-
-    fetch(HOST_API + "/todo", {
-      method: "POST",
-      body: JSON.stringify(request),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(response => response.json())
-      .then((todo) => {
-        dispatch({ type: TYPES.ADD_ITEM, item: todo });
-        setState({ name: "" });
-        formRef.current.reset();
-      });
-  }
-
-  const onEdit = (event) => {
-    event.preventDefault();
-
-    const request = {
-      name: state.name,
-      todoId: item.todoId,
-      isCompleted: item.isCompleted
-    };
-
-
-    fetch(HOST_API + "/todo", {
-      method: "PUT",
-      body: JSON.stringify(request),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(response => response.json())
-      .then((todo) => {
-        dispatch({ type: TYPES.UPDATE_ITEM, item: todo });
-        setState({ name: "" });
-        formRef.current.reset();
-      });
-  }
-
-  return <form ref={formRef}>
-    <input
-      type="text"
-      name="name"
-      placeholder="¿Qué piensas hacer hoy?"
-      defaultValue={item.name}
-      onChange={(event) => {
-        setState({ ...state, name: event.target.value })
-      }}  ></input>
-    {item.todoId && <button onClick={onEdit}>Actualizar</button>}
-    {!item.todoId && <button onClick={onAdd}>Crear</button>}
-  </form>
-}
-
 
 const List = () => {
   const { dispatch, state: { todo } } = useContext(Store);
@@ -164,7 +94,7 @@ const StoreProvider = ({ children }) => {
 function App() {
   return <StoreProvider>
     <h3>To-Do List</h3>
-    <Form />
+    <Form Store={Store} HOST_API={HOST_API}/>
     <List />
   </StoreProvider>
 }
