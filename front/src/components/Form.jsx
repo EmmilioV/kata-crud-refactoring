@@ -18,20 +18,22 @@ const Form = (props) => {
         todoId: null,
         isCompleted: false,
         };
-    
-        fetch(props.HOST_API + "/todo", {
-        method: "POST",
-        body: JSON.stringify(request),
-        headers: {
-            "Content-Type": "application/json",
-        },
-        })
-        .then((response) => response.json())
-        .then((todo) => {
-            dispatch({ type: TYPES.ADD_ITEM, item: todo });
-            setState({ name: "" });
-            formRef.current.reset();
-        });
+
+        if(request.name !== undefined){
+            fetch(props.HOST_API + "/todo", {
+            method: "POST",
+            body: JSON.stringify(request),
+            headers: {
+                "Content-Type": "application/json",
+            },
+            })
+            .then((response) => response.json())
+            .then((todo) => {
+                dispatch({ type: TYPES.ADD_ITEM, item: todo });
+                setState({ name: "" });
+                formRef.current.reset();
+            });
+        }
     };
 
     const onEdit = (event) => {
@@ -43,19 +45,22 @@ const Form = (props) => {
         isCompleted: item.isCompleted,
         };
     
-        fetch(props.HOST_API + "/todo", {
-        method: "PUT",
-        body: JSON.stringify(request),
-        headers: {
-            "Content-Type": "application/json",
-        },
-        })
-        .then((response) => response.json())
-        .then((todo) => {
-            dispatch({ type: TYPES.UPDATE_ITEM, item: todo });
-            setState({ name: "" });
-            formRef.current.reset();
-        });
+        if(request.name !== '')
+        {
+            fetch(props.HOST_API + "/todo", {
+            method: "PUT",
+            body: JSON.stringify(request),
+            headers: {
+                "Content-Type": "application/json",
+            },
+            })
+            .then((response) => response.json())
+            .then((todo) => {
+                dispatch({ type: TYPES.UPDATE_ITEM, item: todo });
+                setState({ name: "" });
+                formRef.current.reset();
+            });
+        }
     };
 
     return (

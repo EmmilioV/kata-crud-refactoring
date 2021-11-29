@@ -20,13 +20,17 @@ public class TodoController {
     
     @PostMapping(value = "api/todo")
     public TodoDTO save(@RequestBody TodoDTO todoDTO){
-        return service.save(todoDTO);
+        if(todoDTO.getName()!=null || todoDTO.getName().length()!=0)
+            return service.save(todoDTO);
+        throw new RuntimeException("Tarea vacía");
     }
 
     @PutMapping(value = "api/todo")
     public TodoDTO update(@RequestBody TodoDTO todoDTO){
         if(todoDTO.getTodoId() != null){
-            return service.save(todoDTO);
+            if((todoDTO.getName()!=null || todoDTO.getName().length()!=0))
+                return service.save(todoDTO);
+            throw new RuntimeException("No se puede actualizar, campo en blanco");
         }
         throw new RuntimeException("No existe el id para actualizar");
     }
