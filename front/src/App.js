@@ -1,10 +1,20 @@
 import React, { useContext, useReducer, useEffect, useRef, useState, createContext } from 'react';
 
 const HOST_API = "http://localhost:8080/api";
+
 const initialState = {
   todo: { list: [], item: {} }
 };
-const Store = createContext(initialState)
+
+const Store = createContext(initialState);
+
+const TYPES = {
+  ADD_ITEM : "add-item",
+  UPDATE_ITEM : "update-item",
+  UPDATE_LIST : "update-list",
+  EDIT_ITEM :"edit-item",
+  DELETE_ITEM : "delete-item"
+};
 
 
 const Form = () => {
@@ -18,8 +28,8 @@ const Form = () => {
 
     const request = {
       name: state.name,
-      id: null,
-      completed: false
+      todoId: null,
+      isCompleted: false
     };
 
 
@@ -32,7 +42,7 @@ const Form = () => {
     })
       .then(response => response.json())
       .then((todo) => {
-        dispatch({ type: "add-item", item: todo });
+        dispatch({ type: TYPES.ADD_ITEM, item: todo });
         setState({ name: "" });
         formRef.current.reset();
       });
@@ -43,7 +53,7 @@ const Form = () => {
 
     const request = {
       name: state.name,
-      id: item.id,
+      todoId: item.todoId,
       isCompleted: item.isCompleted
     };
 
@@ -57,7 +67,7 @@ const Form = () => {
     })
       .then(response => response.json())
       .then((todo) => {
-        dispatch({ type: "update-item", item: todo });
+        dispatch({ type: TYPES.UPDATE_ITEM, item: todo });
         setState({ name: "" });
         formRef.current.reset();
       });
@@ -72,8 +82,8 @@ const Form = () => {
       onChange={(event) => {
         setState({ ...state, name: event.target.value })
       }}  ></input>
-    {item.id && <button onClick={onEdit}>Actualizar</button>}
-    {!item.id && <button onClick={onAdd}>Crear</button>}
+    {item.todoId && <button onClick={onEdit}>Actualizar</button>}
+    {!item.todoId && <button onClick={onAdd}>Crear</button>}
   </form>
 }
 
@@ -86,28 +96,28 @@ const List = () => {
     fetch(HOST_API + "/todos")
       .then(response => response.json())
       .then((list) => {
-        dispatch({ type: "update-list", list })
+        dispatch({ type: TYPES.UPDATE_LIST, list })
       })
   }, [dispatch]);
 
 
-  const onDelete = (id) => {
-    fetch(HOST_API + "/" + id + "/todo", {
+  const onDelete = (todoId) => {
+    fetch(HOST_API + "/" + todoId + "/todo", {
       method: "DELETE"
     }).then((list) => {
-      dispatch({ type: "delete-item", id })
+      dispatch({ type: TYPES.DELETE_ITEM, todoId })
     })
   };
 
   const onEdit = (todo) => {
-    dispatch({ type: "edit-item", item: todo })
+    dispatch({ type: TYPES.EDIT_ITEM, item: todo })
   };
 
   const onChange = (event, todo) => {
     const request = {
       name: todo.name,
-      id: todo.id,
-      completed: event.target.checked
+      todoId: todo.todoId,
+      isCompleted: event.target.checked
     };
     fetch(HOST_API + "/todo", {
       method: "PUT",
@@ -118,12 +128,12 @@ const List = () => {
     })
       .then(response => response.json())
       .then((todo) => {
-        dispatch({ type: "update-item", item: todo });
+        dispatch({ type: TYPES.UPDATE_ITEM, item: todo });
       });
   };
 
   const decorationDone = {
-    textDecoration: 'line-through'
+    textDecorationLine: 'line-through'
   };
   return <div>
     <table >
@@ -136,11 +146,11 @@ const List = () => {
       </thead>
       <tbody>
         {currentList.map((todo) => {
-          return <tr key={todo.id} style={todo.completed ? decorationDone : {}}>
-            <td>{todo.id}</td>
+          return <tr key={todo.todoId} style={todo.isCompleted ? decorationDone : {}}>
+            <td>{todo.todoId}</td>
             <td>{todo.name}</td>
-            <td><input type="checkbox" defaultChecked={todo.completed} onChange={(event) => onChange(event, todo)}></input></td>
-            <td><button onClick={() => onDelete(todo.id)}>Eliminar</button></td>
+            <td><input type="checkbox" defaultChecked={todo.isCompleted} onChange={(event) => onChange(event, todo)}></input></td>
+            <td><button onClick={() => onDelete(todo.todoId)}>Eliminar</button></td>
             <td><button onClick={() => onEdit(todo)}>Editar</button></td>
           </tr>
         })}
@@ -153,10 +163,10 @@ const List = () => {
 
 function reducer(state, action) {
   switch (action.type) {
-    case 'update-item':
+    case TYPES.UPDATE_ITEM:
       const todoUpItem = state.todo;
       const listUpdateEdit = todoUpItem.list.map((item) => {
-        if (item.id === action.item.id) {
+        if (item.todoId === action.item.todoId) {
           return action.item;
         }
         return item;
@@ -164,22 +174,22 @@ function reducer(state, action) {
       todoUpItem.list = listUpdateEdit;
       todoUpItem.item = {};
       return { ...state, todo: todoUpItem }
-    case 'delete-item':
+    case TYPES.DELETE_ITEM:
       const todoUpDelete = state.todo;
       const listUpdate = todoUpDelete.list.filter((item) => {
-        return item.id !== action.id;
+        return item.todoId !== action.todoId;
       });
       todoUpDelete.list = listUpdate;
       return { ...state, todo: todoUpDelete }
-    case 'update-list':
+    case TYPES.UPDATE_LIST:
       const todoUpList = state.todo;
       todoUpList.list = action.list;
       return { ...state, todo: todoUpList }
-    case 'edit-item':
+    case TYPES.EDIT_ITEM:
       const todoUpEdit = state.todo;
       todoUpEdit.item = action.item;
       return { ...state, todo: todoUpEdit }
-    case 'add-item':
+    case TYPES.ADD_ITEM:
       const todoUp = state.todo.list;
       todoUp.push(action.item);
       return { ...state, todo: {list: todoUp, item: {}} }
