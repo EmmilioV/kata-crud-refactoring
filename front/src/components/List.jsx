@@ -50,13 +50,13 @@ const List = (props) => {
     };
     return (
         <div>
-        <table>
-            <thead>
-            <tr>
-                <td>ID</td>
-                <td>Tarea</td>
-                <td>¿Completado?</td>
-            </tr>
+        <table className="table table-bordered">
+            <thead className="thead-light">
+                <tr>
+                    <td>ID</td>
+                    <td>Tarea</td>
+                    <td>¿Completado?</td>
+                </tr>
             </thead>
             <tbody>
             {currentList.map((todo) => {
@@ -68,19 +68,19 @@ const List = (props) => {
                     <td>{todo.todoId}</td>
                     <td>{todo.name}</td>
                     <td>
-                    <input
-                        type="checkbox"
-                        defaultChecked={todo.isCompleted}
-                        onChange={(event) => onChange(event, todo)}
-                    ></input>
+                        <input
+                            type="checkbox"
+                            defaultChecked={todo.isCompleted}
+                            onChange={(event) => onChange(event, todo)}
+                        ></input>
                     </td>
                     <td>
-                    <button onClick={() => onDelete(todo.todoId)}>
-                        Eliminar
-                    </button>
+                        <button className="btn btn-outline-danger" onClick={() => onDelete(todo.todoId)}>
+                            Eliminar
+                        </button>
                     </td>
                     <td>
-                    <button onClick={() => onEdit(todo)}>Editar</button>
+                        <button className="btn btn-outline-warning" onClick={() => onEdit(todo)}>Editar</button>
                     </td>
                 </tr>
                 );

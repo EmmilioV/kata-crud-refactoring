@@ -1,4 +1,5 @@
 import React, { useContext, useRef, useState } from "react";
+import { Fragment } from "react";
 import TYPES from "../Types"
 import Store from "./Store"
 
@@ -58,19 +59,28 @@ const Form = (props) => {
     };
 
     return (
-        <form ref={formRef}>
-        <input
-            type="text"
-            name="name"
-            placeholder="¿Qué piensas hacer hoy?"
-            defaultValue={item.name}
-            onChange={(event) => {
-            setState({ ...state, name: event.target.value });
-            }}
-        ></input>
-        {item.todoId && <button onClick={onEdit}>Actualizar</button>}
-        {!item.todoId && <button onClick={onAdd}>Crear</button>}
-        </form>
+        <Fragment>
+            <form className="form-group" ref={formRef}>
+                <div className="row ">
+                    <div className="col-md-2">
+                    <input
+                        className="form-control input-group mb-3"
+                        type="text"
+                        name="name"
+                        placeholder="¿Qué piensas hacer hoy?"
+                        defaultValue={item.name}
+                        onChange={(event) => {
+                        setState({ ...state, name: event.target.value });
+                        }}
+                    ></input>
+                    </div>
+                    <div className ="col-md-2">
+                        {item.todoId && <button className='btn btn-outline-warning mr-2' onClick={onEdit}>Actualizar</button>}
+                        {!item.todoId && <button className='btn btn-outline-success' onClick={onAdd}>Crear</button>}
+                    </div>
+                </div>
+            </form>
+        </Fragment>
     );
 };
 
