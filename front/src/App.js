@@ -1,4 +1,6 @@
 import React, { useContext, useReducer, useEffect, useRef, useState, createContext } from 'react';
+import reducer from "./Reducer"
+import TYPES from "./components/Types"
 
 const HOST_API = "http://localhost:8080/api";
 
@@ -7,15 +9,6 @@ const initialState = {
 };
 
 const Store = createContext(initialState);
-
-const TYPES = {
-  ADD_ITEM : "add-item",
-  UPDATE_ITEM : "update-item",
-  UPDATE_LIST : "update-list",
-  EDIT_ITEM :"edit-item",
-  DELETE_ITEM : "delete-item"
-};
-
 
 const Form = () => {
   const formRef = useRef(null);
@@ -157,45 +150,6 @@ const List = () => {
       </tbody>
     </table>
   </div>
-}
-
-
-
-function reducer(state, action) {
-  switch (action.type) {
-    case TYPES.UPDATE_ITEM:
-      const todoUpItem = state.todo;
-      const listUpdateEdit = todoUpItem.list.map((item) => {
-        if (item.todoId === action.item.todoId) {
-          return action.item;
-        }
-        return item;
-      });
-      todoUpItem.list = listUpdateEdit;
-      todoUpItem.item = {};
-      return { ...state, todo: todoUpItem }
-    case TYPES.DELETE_ITEM:
-      const todoUpDelete = state.todo;
-      const listUpdate = todoUpDelete.list.filter((item) => {
-        return item.todoId !== action.todoId;
-      });
-      todoUpDelete.list = listUpdate;
-      return { ...state, todo: todoUpDelete }
-    case TYPES.UPDATE_LIST:
-      const todoUpList = state.todo;
-      todoUpList.list = action.list;
-      return { ...state, todo: todoUpList }
-    case TYPES.EDIT_ITEM:
-      const todoUpEdit = state.todo;
-      todoUpEdit.item = action.item;
-      return { ...state, todo: todoUpEdit }
-    case TYPES.ADD_ITEM:
-      const todoUp = state.todo.list;
-      todoUp.push(action.item);
-      return { ...state, todo: {list: todoUp, item: {}} }
-    default:
-      return state;
-  }
 }
 
 const StoreProvider = ({ children }) => {
